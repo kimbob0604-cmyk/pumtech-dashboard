@@ -102,10 +102,10 @@ const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim
 const PX=76600, SH=1240;                 // 11/24 종가, 주식수(만주)
 const MC=PX*SH/1e4;                      // 9,498억
 const Q=[{q:'1Q25',rev:918,op:134},{q:'2Q25',rev:1052,op:194},{q:'3Q25',rev:977,op:153},{q:'4Q25',rev:771,op:83},{q:'1Q26',rev:918,op:130,ni:127},{q:'2Q26',rev:1168,op:217,ni:182},{q:'3Q26',rev:1238,op:251,ni:183}];
-const Y=[{y:'2024',rev:3382,op:484},{y:'2025',rev:3720,op:565},{y:'2026E',rev:4600,op:830,e:1},{y:'2027E',rev:5634,op:1036,e:1},{y:'2028E',rev:6574,op:1301,e:1}];
-const PROD={y:['2025','2026E','2027E','2028E'],v:[6.27,7.1,8.1,9.3]};
+const Y=[{y:'2024',rev:3375,op:484},{y:'2025',rev:3720,op:565},{y:'2026E',rev:4584,op:830,e:1},{y:'2027E',rev:5634,op:1036,e:1},{y:'2028E',rev:6574,op:1301,e:1}];
+const PROD={y:['2025','2026E','2027E','2028E'],v:[6.27,7.51,8.1,9.3]};
 const PRODQ={q:['3Q25','2Q26','3Q26'],v:[1.63,1.77,2.03]};
-const FLOOR={f:['1공장','2공장','3공장','4공장','5공장','6공장','7공장'],v:[4348,2057,1217,3728,1129,2075,2569],inj:[0,1,0,1,0,1,1]};
+const FLOOR={f:['1공장','2공장','3공장(임차)','4공장','5공장','6공장','7공장'],v:[4348,2057,1217,3728,1129,2075,2569],inj:[0,1,0,1,0,1,1]};
 const OPMQ=Q.map(r=>+(r.op/r.rev*100).toFixed(1));
 const CONS=[['유안타','11/16','108,000',800,'1,100'],['한화','11/10','110,000',740,'1,230'],['현대차','11/13','100,000',770,'1,100'],['하나','11/10','100,000',704,'-'],['IBK','11/10','85,000',580,'-'],['교보','11/16','NR',850,'-']];
 // 시총 시나리오 (지배순이익 × PER)
@@ -140,7 +140,7 @@ function build(){
  <tr><td>병목 해소</td><td>상반기 생산 +3.6%는 사출 부족 때문. 6공장 사출 가동(9월) 뒤 3Q 생산 +24.5%, 7공장 11월 착공</td></tr>
  <tr><td>마진</td><td>프리몰드 74%(고객 전용 금형 대비 수익성 약 2배) + 레진 급등 때 올린 판가 유지 → 3Q OPM 20.3%</td></tr>
  <tr><td>컨센서스</td><td>6개사 목표가 평균 100,600원, 2027E 순이익 741억(내 추정 713억을 넘어섬)</td></tr>
- <tr><td>리스크</td><td>7공장 지연(과거 두 번 4개월씩), ODM 재고 조정(올해 매출 증가의 74%가 ODM 경유), 2028년 감가상각</td></tr>
+ <tr><td>리스크</td><td>7공장 지연(과거 두 번 4개월씩), ODM 재고 조정(상반기 매출 증가의 74%가 ODM 경유), 2028년 감가상각</td></tr>
  <tr><td>유동성</td><td>20일 평균 거래대금 73억 → 100억(펀드 1%) 약 7거래일</td></tr></tbody></table>`)}
  ${card('체크 포인트','분기마다 확인',`<div class="tl">
  <div class="st"><div class="w">4Q26</div><div class="e">매출 1,250~1,270억</div><div class="x">회사 가이던스, YoY +60% 초중반</div><span class="pill wait">대기</span></div>
@@ -153,35 +153,36 @@ function build(){
  /* 실적 */
  H+=`<section class="page" id="fin"><div class="page-head"><h1>실적</h1><p>억원, 연결 · DART 분기·반기·사업보고서 · 2026E~2028E는 내 보고서(11/4) 추정</p></div>
  <div class="two">${card('분기 매출·영업이익률','',`<div class="ch-box"><canvas id="cQ"></canvas></div>`)}
- ${card('연간 매출·영업이익','2026E 영업이익은 9M 597억 + 4Q 약 230억으로 상향(보고서 766억은 낮음)',`<div class="ch-box"><canvas id="cY"></canvas></div>`)}</div>
+ ${card('연간 매출·영업이익','2026E = 1~3Q 실적(매출 3,324억 · 영업이익 597억) + 4Q 회사 가이던스 중간값(매출 1,260억 · 영업이익 약 233억). 보고서(11/4) 766억보다 높음',`<div class="ch-box"><canvas id="cY"></canvas></div>`)}</div>
  ${card('외울 숫자','',`<div class="tw"><table><thead><tr><th>분기</th><th class="n">매출</th><th class="n">YoY</th><th class="n">영업이익</th><th class="n">YoY</th><th class="n">OPM</th><th class="n">지배순이익</th></tr></thead><tbody>${Q.map((r,i)=>{const p=i>=4?Q[i-4]:null;return `<tr><td>${r.q}</td><td class="n">${nf(r.rev)}</td><td class="n ${p?cls(r.rev-p.rev):''}">${p?pc((r.rev/p.rev-1)*100):'-'}</td><td class="n">${nf(r.op)}</td><td class="n ${p?cls(r.op-p.op):''}">${p?pc((r.op/p.op-1)*100):'-'}</td><td class="n">${nf(r.op/r.rev*100,1)}%</td><td class="n">${r.ni==null?'-':nf(r.ni)}</td></tr>`}).join('')}
  <tr><td><b>2025</b></td><td class="n"><b>3,720</b></td><td class="n up">+10%</td><td class="n"><b>565</b></td><td class="n up">+17%</td><td class="n">15.2%</td><td class="n"><b>344</b></td></tr></tbody></table></div>
- <ul class="def" style="margin-top:10px"><li>외우는 법: 2025 "3,720 / 565 / 344", 3Q26 "1,238 / 251, 마진 20%"</li><li>1Q·3Q 지배순이익엔 자산처분이익 포함(9M 211억, 3Q 투자부동산 71억) → 이익 체력은 영업이익으로</li><li>4Q25가 낮았던 이유: 관세와 4공장 지연(조립 먼저, 사출 늦게 → 생산 -19.6%)</li><li>사업부(3Q26): 펌프 927억(+24%, OPM 19.9%) · 튜브 325억(+49%, 23.1%) · 건기식 8억</li></ul>`)}
+ <ul class="def" style="margin-top:10px"><li>외우는 법: 2025 "3,720 / 565 / 344", 3Q26 "1,238 / 251, 마진 20%"</li><li>1Q·2Q·3Q 지배순이익 모두 자산처분이익 포함(1~3Q 211억 · 2Q 3공장 매각 35억 · 3Q 투자부동산 71억) → 이익 체력은 영업이익으로</li><li>4Q25가 낮았던 이유: 관세와 4공장 지연(조립 먼저, 사출 늦게 → 생산 -19.6%)</li><li>사업부(3Q26): 펌프 927억(+24%, OPM 19.9%) · 튜브 325억(+49%, 23.1%) · 건기식 8억</li></ul>`)}
  </section>`;
  /* 증설 */
  H+=`<section class="page" id="cap"><div class="page-head"><h1>증설·생산</h1><p>병목은 수요가 아니라 사출 · 사출기는 무게 때문에 1층에만 설치</p></div>
- <div class="two">${card('사업 영역과 병목','자료: KUVIC 리서치 3팀 펌텍코리아 보고서',`<img class="fig" src="img/process.png" alt="금형-사출-후가공-조립 공정과 사출 병목"><p class="figcap">사출의 70%는 협력사, 30%는 펌텍 직접. 회사는 자체·협력사 증설을 합쳐도 수주 대비 사출이 모자라다고 설명(11/23 탐방)</p>`)}
- ${card('공장별 1층 면적 (㎡)','건축물대장·등기 직접 대조. 진한 색 = 1층을 사출로 쓰는 공장',`<div class="ch-box"><canvas id="cF"></canvas></div><p class="figcap">사출 1층 5,785㎡(2025) → 10,429㎡(+80%). 단, 협력사 증설도 생산능력이라 1층 면적이 곧 생산량은 아님(회사)</p>`)}</div>
+ <div class="two">${card('사업 영역과 병목','자료: KUVIC 리서치 3팀 펌텍코리아 보고서',`<img class="fig" src="img/process.png" alt="금형-사출-후가공-조립 공정과 사출 병목"><p class="figcap">사출의 70%는 외부 협력사, 30%는 100% 자회사 피티프라스(1~3Q26 사출품 매입 549억 중 178억, 분기보고서). 본사는 사출품을 자회사 포함 협력사에서 전량 구매. 회사는 자체·협력사 증설을 합쳐도 수주 대비 사출이 모자라다고 설명(11/23 탐방)</p>`)}
+ ${card('공장별 1층 면적 (㎡)','건축물대장·등기 직접 대조. 진한 색 = 1층을 사출로 쓰는 공장',`<div class="ch-box"><canvas id="cF"></canvas></div><p class="figcap">사출 1층 5,785㎡(2025) → 10,429㎡(+80%). 단, 협력사 증설도 생산능력이라 1층 면적이 곧 생산량은 아님(회사). 3공장은 2026년 5월 특수관계 개인주주에게 111.8억에 매각한 뒤 임차해 사용(분기보고서)</p>`)}</div>
  <div class="two">${card('분기 생산량 (억 개)','분기보고서 누적 차감',`<div class="ch-box"><canvas id="cPQ"></canvas></div><p class="figcap">3Q26 YoY +24.5%, QoQ +14.7%. 3Q 가동률 89%, 1~3Q 85.4%</p>`)}
- ${card('연간 생산량 경로 (억 개)','내 보고서 추정',`<div class="ch-box"><canvas id="cPY"></canvas></div><p class="figcap">2025 → 2028E +48%. 7공장은 과거 두 번 4개월씩 지연 → 2028년 1~2월 준공, 1Q28 가동률 10%만 반영</p>`)}</div>
+ ${card('연간 생산량 경로 (억 개)','2026E = 1~3Q 실적 5.48억 + 4Q 3Q 수준(2.03억) 가정 · 2027E·2028E는 내 보고서(11/4) 추정',`<div class="ch-box"><canvas id="cPY"></canvas></div><p class="figcap">2025 → 2028E +48%. 7공장은 과거 두 번 4개월씩 지연 → 2028년 1~2월 준공, 1Q28 가동률 10%만 반영</p>`)}</div>
  </section>`;
  /* 마진 */
  H+=`<section class="page" id="mar"><div class="page-head"><h1>마진</h1><p>마진은 품목이 아니라 금형이 정한다</p></div>
  <div class="two">${card('분기 영업이익률','',`<div class="ch-box"><canvas id="cM"></canvas></div><p class="figcap">4Q는 계절적으로 낮음(4Q25 10.8%). 회사도 3Q 20%는 높았다고 봐서 18%대를 기준으로 둠</p>`)}
- ${card('원가는 올랐는데 마진은 올랐다','분기보고서 원재료 가격',`<table class="vs"><thead><tr><th></th><th class="n">2024</th><th class="n">2025</th><th class="n">1~3Q26</th></tr></thead><tbody>
+ ${card('원가는 올랐는데 마진은 올랐다','분기보고서 원재료 가격(연간 평균, 2026년은 1~3Q 평균)',`<table class="vs"><thead><tr><th></th><th class="n">2024</th><th class="n">2025</th><th class="n">1~3Q26</th></tr></thead><tbody>
  <tr><td>사출품 매입단가</td><td class="n">46원</td><td class="n">48원</td><td class="n">52원</td></tr>
- <tr><td>원료 단가</td><td class="n">132원</td><td class="n">148원</td><td class="n">162원</td></tr>
- <tr><td>매출총이익률(3Q)</td><td class="n">-</td><td class="n">23.0%</td><td class="n"><b>26.7%</b></td></tr></tbody></table>
- <ul class="def" style="margin-top:10px"><li><b>프리몰드 74%:</b> 금형을 먼저 만들어 카탈로그로 판매, 장식만 바꿔 여러 브랜드에 → 고객 전용 금형 대비 수익성 약 2배. 연우는 약 50%</li><li><b>판가:</b> 2026년 5~6월 레진 급등 때 인상, 레진이 내려와도 유지(회사). 튜브처럼 원료가 많이 드는 제품은 약 10% 인상</li><li><b>일회성:</b> 9M OPM 개선 1.7%p 중 약 1.2%p는 금형비 감소(61.7억 → 30.3억)</li><li><b>옵션:</b> 쿠션(콤팩트) 비중 펌프사업부의 약 15%, 글로벌 쿠션 신제품 3건 → 8건, 로레알 콤팩트 4Q 첫 출고</li></ul>`)}</div>
+ <tr><td>원료 단가</td><td class="n">132원</td><td class="n">148원</td><td class="n">162원</td></tr></tbody></table>
+ <table class="vs" style="margin-top:8px"><thead><tr><th></th><th class="n">3Q25</th><th class="n">3Q26</th></tr></thead><tbody>
+ <tr><td>매출총이익률(분기)</td><td class="n">23.0%</td><td class="n"><b>26.7%</b></td></tr></tbody></table>
+ <ul class="def" style="margin-top:10px"><li><b>프리몰드 74%:</b> 금형을 먼저 만들어 카탈로그로 판매, 장식만 바꿔 여러 브랜드에 → 고객 전용 금형 대비 수익성 약 2배. 연우는 약 50%</li><li><b>판가:</b> 2026년 5~6월 레진 급등 때 인상, 레진이 내려와도 유지(회사). 튜브처럼 원료가 많이 드는 제품은 약 10% 인상</li><li><b>일회성:</b> 3Q OPM 개선 4.6%p(15.7% → 20.3%) 중 1.8%p는 금형비 감소(23.5억 → 8.0억, 매출 대비 2.4% → 0.6%). 나머지는 매출총이익률 개선과 판관비율 하락(7.3% → 6.4%)</li><li><b>옵션:</b> 쿠션(콤팩트) 비중 펌프사업부의 약 15%, 글로벌 쿠션 신제품 3건 → 8건, 로레알 콤팩트 4Q 첫 출고</li></ul>`)}</div>
  </section>`;
  /* 고객·업종 */
  H+=`<section class="page" id="mkt"><div class="page-head"><h1>고객·업종</h1><p>어느 브랜드가 뜨든 물량을 가져가는 구조</p></div>
- <div class="two">${card('판매 채널 (1H26)','',`<div class="ch-box"><canvas id="cCh"></canvas></div><p class="figcap">ODM 재고 조정이 바로 매출로 넘어오는 구조 → 올해 매출 증가의 74%가 ODM 경유</p>`)}
+ <div class="two">${card('판매 채널 (1~3Q26)','분기보고서 판매경로 · 화장품 용기 매출 기준',`<div class="ch-box"><canvas id="cCh"></canvas></div><p class="figcap">ODM 재고 조정이 바로 매출로 넘어오는 구조 → 상반기 매출 증가의 74%가 ODM 경유(1H 기준)</p>`)}
  ${card('업종 대비 움직임','1년 일간 수익률, 화장품 업종(ODM 3사 + 브랜드 4사) 대비',`<table class="vs"><tbody>
  <tr><td>베타</td><td>펌텍 <b>0.90</b> · 코스맥스 1.06 · 한국콜마 1.13 · 코스메카 1.33</td></tr>
  <tr><td>업종 -2% 이상 48일</td><td>업종 -3.34% · ODM -3.78% · <b>펌텍 -2.05%</b>(61%만 반영)</td></tr>
  <tr><td>업종 +2% 이상 49일</td><td>업종 +4.13% · 펌텍 +3.81%(92% 반영)</td></tr>
- <tr><td>점유율</td><td>국내 주요 용기 14사 중 20.2%(2021) → 24.5%(2025), 연우 27.3% → 16.7%</td></tr>
+ <tr><td>점유율</td><td>국내 주요 용기 15개사(회사 추정, 펌텍+부국 합산) 중 20.2%(2021) → 24.5%(2025), 연우 27.3% → 16.7%</td></tr>
  <tr><td>주의</td><td>절대 변동성은 연 60%로 낮지 않음 → "업종보다 덜 빠진다"까지만</td></tr></tbody></table>`)}</div>
  ${card('화장품 밸류체인 비교','Yahoo Finance 11/24 · 매출 성장·영업이익률은 최근 4분기',`<div class="tw"><table><thead><tr><th>회사</th><th>위치</th><th class="n">시총(억원)</th><th class="n">선행 PER</th><th class="n">매출 성장</th><th class="n">영업이익률</th><th class="n">1년 주가</th></tr></thead><tbody>${PEERS.filter(p=>p.mc).map(p=>{const pos={'펌텍코리아':'용기','한국콜마':'ODM','코스맥스':'ODM','코스메카코리아':'ODM','에이피알':'브랜드(디바이스)','클리오':'브랜드(색조)'}[p.n];return `<tr${p.n==='펌텍코리아'?' style="font-weight:700"':''}><td>${p.n}</td><td>${pos}</td><td class="n">${nf(p.mc/1e8)}</td><td class="n">${nf(p.fpe,1)}배</td><td class="n ${cls(p.rg)}">${pc(p.rg*100)}</td><td class="n">${pc(p.opm*100,1)}</td><td class="n ${cls(p.y52)}">${pc(p.y52*100)}</td></tr>`}).join('')}</tbody></table></div>`)}
  ${card('지배구조','자료: KUVIC 리서치 3팀',`<img class="fig" src="img/structure.png" alt="펌텍코리아 자회사 구조" style="max-width:760px">`)}
@@ -211,16 +212,16 @@ function build(){
  ${card('스크립트','',`<div class="script">
  <p><span class="tg">[0:00 결론]</span>첫 번째 종목은 펌텍코리아입니다. 매수 의견입니다. 지금 시총 9,500억에서 2028년 지배순이익 868억에 증설기 평균 PER 15배를 주면 1조 3,000억으로, 3,500억이 더해집니다. 이익 정체기 배수인 11배로 돌아가면 7,800억으로, 하방은 1,700억입니다.</p>
  <p><span class="tg">[0:30 산업 → 회사]</span>K뷰티 수출 물량은 올해 1~10월 25% 늘었습니다. 펌텍은 이 물량을 브랜드나 ODM이 아니라 용기로 받는 회사입니다. 어느 브랜드가 뜨든 물량을 가져가기 때문에 업종보다 덜 흔들립니다. 화장품 업종이 2% 넘게 빠진 날 ODM은 평균 3.8% 빠졌지만 펌텍은 2.1%만 빠졌고, 오르는 날은 상승폭의 90% 이상을 따라갔습니다.</p>
- <p><span class="tg">[1:20 포인트 1: 사출 병목이 풀린다]</span>올해 상반기 생산이 3.6%밖에 늘지 못한 건 수요가 아니라 사출이 막혔기 때문입니다. 사출의 70%는 협력사가, 30%는 펌텍이 직접 합니다. 사출기는 무거워서 1층에만 둘 수 있고, 6공장 1층은 전부 사출 라인입니다. 9월 가동 뒤 3분기 생산량은 1년 전보다 25% 늘었고, 제가 현장에서 확인한 7공장도 이달 착공해 1층을 사출로 씁니다.</p>
+ <p><span class="tg">[1:20 포인트 1: 사출 병목이 풀린다]</span>올해 상반기 생산이 3.6%밖에 늘지 못한 건 수요가 아니라 사출이 막혔기 때문입니다. 사출의 70%는 외부 협력사가, 30%는 100% 자회사인 피티프라스가 맡습니다. 사출기는 무거워서 1층에만 둘 수 있고, 6공장 1층은 전부 사출 라인입니다. 9월 가동 뒤 3분기 생산량은 1년 전보다 25% 늘었고, 제가 현장에서 확인한 7공장도 이달 착공해 1층을 사출로 씁니다.</p>
  <p><span class="tg">[2:20 포인트 2: 마진은 금형이 정한다]</span>펌텍은 금형을 먼저 만들어 카탈로그로 파는 프리몰드가 매출의 74%입니다. 같은 금형을 장식만 바꿔 여러 브랜드에 팔기 때문에 수익성이 고객 전용 금형의 약 2배입니다. 여기에 레진 급등 때 올린 판가를 유지하면서 3분기 영업이익률이 20%를 넘었습니다. 회사도 20%는 높았다고 보기 때문에 저는 18%대를 기준으로 둡니다. 덤으로 로레알이 올해 콤팩트를 주문해 4분기에 첫 출고가 나갑니다.</p>
  <p><span class="tg">[3:20 밸류에이션]</span>3분기 이후 증권사 여섯 곳이 모두 목표가를 올렸고, 2027년 순이익 컨센서스는 741억으로 제 추정을 넘어섰습니다. 이제 시총 애드는 2028년 이익과 배수에서 나옵니다. 2027년 기준 15배면 시총 1조 700억으로 1,200억, 2028년 기준이면 3,500억이 더해집니다. 그래서 1조 700억, 주가로 8만 6천원 아래에서만 새로 사겠습니다.</p>
  <p><span class="tg">[4:20 리스크와 관리]</span>리스크는 세 가지입니다. 7공장 지연, 장기 계약이 없어 ODM 재고 조정이 바로 매출로 넘어오는 구조, 그리고 2028년 신공장 감가상각입니다. 과거 증설이 두 번 모두 4개월씩 늦어서 2028년 1분기 가동률은 10%만 넣었습니다. 영업이익률이 두 분기 연속 18%를 밑돌면 논리를 다시 보겠습니다. 하루 거래대금이 70억대라 펀드 1%는 7거래일이면 담을 수 있습니다.</p></div>`)}
- ${card('외울 숫자','',`<ul class="def"><li>시총 9,500억 → 목표 1조 3,000억(+3,500억) · 진입선 1조 700억(+1,200억) · 하방 7,800억(-1,700억)</li><li>2025 "3,720 / 565 / 344" · 3Q26 "1,238 / 251, 마진 20%"</li><li>수출 물량 +25% · 업종 하락일 61%만 반영 · 베타 0.90</li><li>상반기 생산 +3.6% → 3Q +24.5% · 사출 1층 +80% · 사출 외주 70%</li><li>프리몰드 74% · 사출품 단가 46 → 52원인데 GPM 23.0 → 26.7%</li><li>컨센서스 6사 목표가 평균 100,600원 · 2027E 741억 vs 내 713억 · 2028E 영업이익 1,143억 vs 내 1,246억</li></ul>`)}
+ ${card('외울 숫자','',`<ul class="def"><li>시총 9,500억 → 목표 1조 3,000억(+3,500억) · 진입선 1조 700억(+1,200억) · 하방 7,800억(-1,700억)</li><li>2025 "3,720 / 565 / 344" · 3Q26 "1,238 / 251, 마진 20%"</li><li>수출 물량 +25% · 업종 하락일 61%만 반영 · 베타 0.90</li><li>상반기 생산 +3.6% → 3Q +24.5% · 사출 1층 +80% · 사출 외부 협력사 70%, 자회사 30%</li><li>프리몰드 74% · 사출품 단가 48원(2025) → 52원(1~3Q26)인데 3Q GPM 23.0% → 26.7%</li><li>컨센서스 6사 목표가 평균 100,600원 · 2027E 741억 vs 내 713억 · 2028E 영업이익 1,143억 vs 내 1,246억</li></ul>`)}
  </section>`;
  /* 질의 */
  const QA=[
  ['추정이 컨센서스보다 높은가?','2027년은 이제 컨센서스(741억)가 제 추정(713억)보다 4% 높습니다. 남은 차이는 2028년 영업이익이고, 제 추정 1,246억이 컨센서스 1,143억보다 9% 높습니다. 6·7공장 사출과 협력사 증설이 함께 붙는 해라서, 시총 애드 3,500억 중 일부가 이 차이에서 나옵니다.'],
- ['3분기 마진이 일회성 아닌가?','일부는 맞습니다. 9개월 영업이익률 개선폭 1.7%p 중 약 1.2%p는 금형비 감소(61.7억 → 30.3억)였습니다. 다만 사출품 단가가 48원에서 52원으로 올랐는데도 매출총이익률은 23.0%에서 26.7%로 올랐고, 판가를 내릴 계획은 없다고 합니다. 그래서 18%대를 기준으로 봅니다.'],
+ ['3분기 마진이 일회성 아닌가?','일부는 맞습니다. 3분기 영업이익률은 15.7%에서 20.3%로 4.6%p 올랐는데, 이 중 1.8%p는 금형비 감소(23.5억 → 8.0억)입니다. 금형비는 신규 금형이 늘면 다시 커질 수 있습니다. 다만 이를 빼도 2.8%p가 남습니다. 사출품 단가가 2025년 48원에서 올해 1~3분기 52원으로 올랐는데도 3분기 매출총이익률은 23.0%에서 26.7%로 올랐고, 판가를 내릴 계획은 없다고 합니다. 그래서 18%대를 기준으로 봅니다.'],
  ['레진이 다시 오르면?','레진은 펌텍이 사서 협력사에 공급하고 헤지는 하지 않습니다. 원료가 많이 드는 제품일수록 판가를 더 올렸습니다(튜브 약 10%). 다시 오르면 시차를 두고 전가할 수 있지만 한두 분기는 마진이 눌릴 수 있습니다.'],
  ['서구 쿠션 데이터가 판매 데이터인가?','아닙니다. 출시 건수(3건 → 8건), 세포라 색상 수, 로레알 CEO 발언입니다. 그래서 쿠션은 매수 근거가 아니라 옵션입니다. 콤팩트 비중이 2028년에 20%로만 가도 시총 1조 2,500억 수준입니다.'],
  ['6공장이 진짜 돌고 있나?','3분기 생산량이 2억 300만 개로 1년 전보다 24.5%, 전 분기보다 14.7% 늘었습니다. 상반기 증가율이 3.6%였으니 숫자가 바뀐 건 9월 가동 이후입니다.'],
@@ -232,7 +233,7 @@ function build(){
  ['내부자 매도는?','박상규 부사장이 11/12에 3,000주(71,166원)를 장내매도했습니다. 지분 대비 작은 규모입니다.'],
  ['숏 상대는?','한국콜마는 쓰지 않습니다. 펌텍의 2위 고객이고, 전방이 먼저 열어 줘야 같이 가는 구조입니다. 헤지는 지수나 업종 바스켓으로 합니다.']];
  H+=`<section class="page" id="qa"><div class="page-head"><h1>예상 질의</h1><p>눌러서 답 보기 · 금액은 시총 기준</p></div>${card('','',`<div class="qa">${QA.map(([q,a])=>`<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`)}</section>`;
- H+=`<section class="page" id="src"><div class="page-head"><h1>출처</h1></div>${card('','',`<ul class="def"><li>DART 펌텍코리아 분기·반기·사업보고서(생산실적, 원재료 가격, 판매 채널)</li><li>리포트: 유안타(11/16)·한화(11/10)·현대차(11/13)·하나(11/10)·IBK(11/10)·교보(11/16)</li><li>KUVIC 리서치 3팀 펌텍코리아 보고서(2026.11) · 11/5 7공장 현장 · 11/23 탐방</li><li>건축물대장·등기(공장별 1층 면적) · 관세청 화장품 수출 중량</li><li>주가·피어: Yahoo Finance(11/24)</li></ul>`)}</section>`;
+ H+=`<section class="page" id="src"><div class="page-head"><h1>출처</h1></div>${card('','',`<ul class="def"><li>DART 펌텍코리아 분기·반기·사업보고서(생산실적, 원재료 가격, 판매 채널) · 3Q26 분기보고서(11/16)로 숫자 대조·수정(11/24)</li><li>리포트: 유안타(11/16)·한화(11/10)·현대차(11/13)·하나(11/10)·IBK(11/10)·교보(11/16)</li><li>KUVIC 리서치 3팀 펌텍코리아 보고서(2026.11) · 11/5 7공장 현장 · 11/23 탐방</li><li>건축물대장·등기(공장별 1층 면적) · 관세청 화장품 수출 중량</li><li>주가·피어: Yahoo Finance(11/24)</li></ul>`)}</section>`;
  $('#main').innerHTML=H;
  $('#foot').textContent='리서치 정리 · 투자 권유 아님';
  $('#stamp').textContent='기준 2026-11-24';
@@ -253,7 +254,7 @@ function draw(h){
   mk('cPY',{type:'bar',data:{labels:PROD.y,datasets:[{data:PROD.v,backgroundColor:PROD.y.map(y=>y.includes('E')?c1+'88':c1)}]},options:{...O,plugins:{legend:{display:false}}}});
  }
  if(h==='mar') mk('cM',{type:'line',data:{labels:Q.map(r=>r.q),datasets:[{label:'영업이익률(%)',data:OPMQ,borderColor:c5,backgroundColor:c5,tension:.3},{label:'기준선 18%',data:Q.map(()=>18),borderColor:c6,borderDash:[5,4],pointRadius:0}]},options:{...O,scales:{y:{ticks:{callback:v=>v+'%'}}}}});
- if(h==='mkt') mk('cCh',{type:'doughnut',data:{labels:['브랜드 직거래','ODM/OEM','판매 파트너'],datasets:[{data:[44.6,38.0,17.4],backgroundColor:[c1,c2,c3]}]},options:{...O,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.label+' '+c.raw+'%'}}}}});
+ if(h==='mkt') mk('cCh',{type:'doughnut',data:{labels:['브랜드 직거래','ODM/OEM','판매 파트너'],datasets:[{data:[44.8,38.1,17.0],backgroundColor:[c1,c2,c3]}]},options:{...O,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.label+' '+c.raw+'%'}}}}});
  if(h==='val'){const T=NI28*15,E=NI27*15,B=NI27*11,C=NI27C*15,U=NI28*18;mk('cV',{type:'bar',data:{labels:['하방','지금','진입선','컨센서스','목표','Bull'],datasets:[{data:[B,MC,E,C,T,U].map(Math.round),backgroundColor:[css('--down'),c6,c3,c4,c1,css('--up')]}]},options:{...O,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>nf(c.raw)+'억'}}},scales:{x:{ticks:{callback:v=>nf(v)}}}}})}
  if(h==='px'){
   mk('cP',{type:'line',data:{labels:P.d,datasets:[{label:'펌텍코리아',data:P['펌텍코리아'],borderColor:c1,pointRadius:0,borderWidth:1.6,spanGaps:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:8}}}}});
