@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>펌텍코리아 대시보드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--text:#191f28;--sub:#4e5968;--muted:#8b95a1;--line:#e9ebee;--chip:#f2f4f6;--chip-on:#fff;--up:#d6453d;--down:#3a6fd8;--accent:#3182f6;--hover:#f7f8fa;--head-bg:rgba(255,255,255,.86);--shadow:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.05);--grid:#eef0f3;
+--c1:#3182f6;--c2:#f59e0b;--c3:#14a39a;--c4:#9b6bd3;--c5:#d6453d;--c6:#8b95a1;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101216;--card:#191c22;--text:#e8eaed;--sub:#b0b8c1;--muted:#7d8590;--line:#2a2e36;--chip:#242832;--chip-on:#343a46;--up:#ff7a72;--down:#6f9bff;--accent:#4b93ff;--hover:#20242c;--head-bg:rgba(25,28,34,.86);--shadow:none;--grid:#242832;--c1:#4b93ff;--c2:#f5b342;--c3:#2fc4b8;--c4:#b48ae8;--c5:#ff7a72;--c6:#7d8590;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101216;--card:#191c22;--text:#e8eaed;--sub:#b0b8c1;--muted:#7d8590;--line:#2a2e36;--chip:#242832;--chip-on:#343a46;--up:#ff7a72;--down:#6f9bff;--accent:#4b93ff;--hover:#20242c;--head-bg:rgba(25,28,34,.86);--shadow:none;--grid:#242832;--c1:#4b93ff;--c2:#f5b342;--c3:#2fc4b8;--c4:#b48ae8;--c5:#ff7a72;--c6:#7d8590;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 "Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo",sans-serif;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+a{color:inherit}button,select,input{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:20px;padding:10px 32px;background:var(--head-bg);border-bottom:1px solid var(--line);-webkit-backdrop-filter:saturate(1.6) blur(12px);backdrop-filter:saturate(1.6) blur(12px)}
+.brand{font-weight:800;font-size:16px;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.brand::before{content:"";width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--up),#f59e0b 55%,var(--accent))}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tab{padding:6px 12px;border-radius:999px;white-space:nowrap;color:var(--sub);text-decoration:none;cursor:pointer;border:0;background:none;min-height:34px}
+.tab:hover{background:var(--chip);color:var(--text)}.tab.on{background:var(--text);color:var(--card);font-weight:600}
+.top-right{margin-left:auto;display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px;white-space:nowrap}
+.icon-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;width:34px;height:34px;cursor:pointer}
+main{max-width:1240px;margin:0 auto;padding:18px 32px 40px}
+.page{display:none}.page.on{display:block}
+.page-head{margin:6px 2px 14px}.page-head h1{margin:0 0 2px;font-size:22px;font-weight:800;letter-spacing:-.03em}.page-head p{margin:0;color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px 20px;margin-bottom:14px}
+.card h2{margin:0 0 4px;font-size:16px;font-weight:700}.cap{color:var(--muted);font-size:12.5px;margin:0 0 10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);cursor:pointer;text-align:left}
+.kpi:hover{background:var(--hover)}.kpi .l{font-size:12px;color:var(--muted)}.kpi .v{font-size:22px;font-weight:800;letter-spacing:-.02em}.kpi .s{font-size:12px;color:var(--sub)}
+.up{color:var(--up)}.down{color:var(--down)}.muted{color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:12px;box-shadow:var(--shadow)}
+.seg{display:inline-flex;background:var(--chip);border-radius:10px;padding:3px;flex-wrap:wrap}
+.seg button{border:0;background:none;padding:5px 11px;border-radius:8px;cursor:pointer;color:var(--sub);white-space:nowrap;min-height:32px}
+.seg button.on{background:var(--chip-on);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.dir{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:5px 12px;cursor:pointer;min-height:34px;font-weight:600}
+.lbl{font-size:12px;color:var(--muted);margin-right:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:12px}
+.wc{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;text-decoration:none;color:inherit}
+.wc:hover{border-color:var(--sub)}
+.wc .im{position:relative;aspect-ratio:3/4;background:var(--chip);overflow:hidden}
+.wc .im img{width:100%;height:100%;object-fit:cover;display:block}
+.wc .rk{position:absolute;left:8px;top:8px;background:rgba(0,0,0,.72);color:#fff;font-weight:800;font-size:13px;border-radius:8px;padding:2px 8px}
+.wc .ch{position:absolute;right:8px;top:8px;font-size:11px;font-weight:700;border-radius:8px;padding:2px 6px;background:rgba(255,255,255,.92);color:#191f28}
+.wc .bd{padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.wc .t{font-weight:700;font-size:13.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:36px}
+.wc .g{font-size:11px;color:var(--muted)}
+.wc .m{display:grid;grid-template-columns:1fr auto;gap:1px 8px;font-size:12px}.wc .m span:nth-child(odd){color:var(--muted)}.wc .m b{text-align:right}
+.chip{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:8px;background:var(--chip);margin-right:4px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 8px;border-top:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-size:12px;font-weight:600;color:var(--muted);background:var(--hover);border-top:0;cursor:pointer;user-select:none}
+th.on{color:var(--accent)}th.on[data-dir=desc]::after{content:" ▼";font-size:10px}th.on[data-dir=asc]::after{content:" ▲";font-size:10px}
+td.n,th.n{text-align:right}tbody tr:hover{background:var(--hover)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px}
+.ch-box{position:relative;height:280px}.ch-box.tall{height:340px}
+.fin-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 14px;margin-bottom:12px}
+.fin-in label{font-size:12px;color:var(--sub);display:flex;flex-direction:column;gap:3px}
+input[type=number]{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);min-height:36px;width:100%}
+.ct input{max-width:110px;text-align:right}td.d{color:var(--muted);font-size:12px;white-space:normal;min-width:180px}
+.note{background:var(--chip);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.bad{background:rgba(214,69,61,.08);border:1px solid rgba(214,69,61,.25)}
+ul.def{margin:0;padding-left:18px}ul.def li{margin:4px 0}
+footer{max-width:1240px;margin:0 auto;padding:0 32px 40px;color:var(--muted);font-size:12px}
+@media (max-width:720px){.top{padding:8px 12px;gap:10px;flex-wrap:wrap}.top-right{display:none}main{padding:12px 12px 32px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}footer{padding:0 12px 32px}}
+</style>
+<style>
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--chip);margin:0 4px 4px 0}
+.pill.wait{background:rgba(245,158,11,.16);color:#b7791f}.pill.ok{background:rgba(20,163,154,.14);color:var(--c3)}
+.tl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tl .st{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--card)}
+.tl .st .w{font-size:12px;color:var(--muted)}.tl .st .e{font-weight:700;margin:2px 0}.tl .st .x{font-size:12px;color:var(--sub)}
+.script p{margin:0 0 10px;line-height:1.7}.script .tg{font-weight:800;color:var(--accent);margin-right:6px}
+.qa details{border-top:1px solid var(--line);padding:10px 2px}.qa details:first-child{border-top:0}
+.qa summary{cursor:pointer;font-weight:700}.qa details p{margin:8px 0 0;color:var(--sub);line-height:1.65}
+.big{font-size:30px;font-weight:800;letter-spacing:-.03em}
+.vs td{white-space:normal;vertical-align:top}.vs td:first-child{font-weight:600;white-space:nowrap}
+td{white-space:normal}
+.fig{width:100%;border-radius:12px;border:1px solid var(--line);background:#fff;display:block}.figcap{font-size:12px;color:var(--muted);margin:6px 0 0}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">펌텍코리아 대시보드</div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="top-right"><span id="stamp"></span><button id="theme" class="icon-btn" aria-label="다크 모드 전환" title="다크 모드 전환">◐</button></div>
+</header>
+<main id="main"></main>
+<footer id="foot"></footer>
+<script>
+const P={"d": ["2025-11-20", "2025-11-21", "2025-11-24", "2025-11-25", "2025-11-26", "2025-11-27", "2025-11-28", "2025-12-01", "2025-12-02", "2025-12-03", "2025-12-04", "2025-12-05", "2025-12-08", "2025-12-09", "2025-12-10", "2025-12-11", "2025-12-12", "2025-12-15", "2025-12-16", "2025-12-17", "2025-12-18", "2025-12-19", "2025-12-22", "2025-12-23", "2025-12-24", "2025-12-26", "2025-12-29", "2025-12-30", "2026-01-02", "2026-01-05", "2026-01-06", "2026-01-07", "2026-01-08", "2026-01-09", "2026-01-12", "2026-01-13", "2026-01-14", "2026-01-15", "2026-01-16", "2026-01-19", "2026-01-20", "2026-01-21", "2026-01-22", "2026-01-23", "2026-01-26", "2026-01-27", "2026-01-28", "2026-01-29", "2026-01-30", "2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06", "2026-02-09", "2026-02-10", "2026-02-11", "2026-02-12", "2026-02-13", "2026-02-19", "2026-02-20", "2026-02-23", "2026-02-24", "2026-02-25", "2026-02-26", "2026-02-27", "2026-03-03", "2026-03-04", "2026-03-05", "2026-03-06", "2026-03-09", "2026-03-10", "2026-03-11", "2026-03-12", "2026-03-13", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-23", "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-03", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-09", "2026-04-10", "2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-04", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-01", "2026-07-02", "2026-07-03", "2026-07-06", "2026-07-07", "2026-07-08", "2026-07-09", "2026-07-10", "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-20", "2026-07-21", "2026-07-22", "2026-07-23", "2026-07-24", "2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30", "2026-07-31", "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-10", "2026-08-11", "2026-08-12", "2026-08-13", "2026-08-14", "2026-08-18", "2026-08-19", "2026-08-20", "2026-08-21", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15", "2026-10-16", "2026-10-19", "2026-10-20", "2026-10-21", "2026-10-22", "2026-10-23", "2026-10-26", "2026-10-27", "2026-10-28", "2026-10-29", "2026-10-30", "2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05", "2026-11-06", "2026-11-09", "2026-11-10", "2026-11-11", "2026-11-12", "2026-11-13", "2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20", "2026-11-23", "2026-11-24"], "펌텍코리아": [55900, 54300, 54300, 53600, 53300, 54100, 55500, 56100, 56500, 56300, 56100, 54500, 54400, 55600, 54400, 53300, 54600, 51200, 52700, 53500, 53100, 53800, 54200, 53800, 53300, 53400, 52000, 52100, 54900, 53100, 51900, 50600, 51000, 55100, 55100, 56100, 56200, 55600, 54600, 53500, 54200, 53900, 59500, 59700, 61600, 61100, 64200, 66000, 65600, 63000, 61900, 59700, 59100, 58500, 61100, 60900, 60200, 59100, 57600, 57300, 57000, 56800, 56400, 55900, 54000, 52100, 49300, 44850, 46900, 48800, 47200, 46150, 46000, 46200, 46350, 45100, 46000, 46850, 45600, 47150, 46200, 46800, 46800, 45650, 47600, 46000, 46550, 48000, 46500, 45550, 43750, 42750, 44150, 44400, 44100, 44550, 44100, 44400, 44650, 44550, 43800, 43350, 43150, 43350, 43950, 44250, 43250, 42650, 41400, 42600, 41250, 40400, 41800, 41750, 40000, 38550, 39950, 38850, 38800, 38350, 36400, 37350, 39250, 38400, 37300, 37550, 36250, 35600, 34300, 35450, 34400, 33300, 33950, 33500, 35050, 36850, 37400, 36000, 37350, 36200, 35500, 34400, 33300, 34050, 33200, 32550, 38000, 35800, 38400, 38650, 43000, 43200, 46500, 44700, 46700, 43700, 42850, 41950, 42000, 41950, 39150, 39500, 38350, 40500, 44000, 48600, 47550, 49950, 46400, 46100, 45400, 48400, 46750, 49850, 49500, 49650, 51200, 58900, 54800, 53000, 55000, 55400, 57100, 59800, 63400, 63000, 59100, 56600, 61700, 59000, 58200, 56900, 57500, 55300, 53700, 51900, 51300, 52400, 52800, 59100, 57700, 61300, 61900, 61700, 59700, 57400, 57500, 61500, 63000, 61300, 63000, 60500, 63000, 67200, 65500, 67900, 68800, 69200, 66900, 71300, 71800, 70700, 69000, 69800, 69700, 68600, 67500, 66000, 65100, 64200, 64400, 64000, 64100, 68900, 70300, 69000, 67400, 74500, 77400, 73900, 77000, 76300, 77100, 79900, 77200, 76400, 76600], "한국콜마": [66200, 67200, 66700, 65300, 65800, 65800, 66700, 65400, 65700, 65900, 65300, 65500, 65700, 65400, 64400, 63800, 64200, 63200, 65100, 64100, 62500, 62800, 63000, 62100, 62000, 61100, 62100, 62100, 65400, 65000, 64400, 63600, 63000, 63300, 63900, 63200, 64200, 64300, 63900, 64100, 64900, 64500, 66400, 66700, 66700, 67100, 68100, 69200, 69900, 67300, 69000, 68400, 68600, 69100, 72700, 72800, 73500, 72400, 72400, 73700, 72400, 71600, 71200, 71600, 75000, 76300, 72800, 64200, 69200, 70000, 66300, 70000, 69400, 71700, 71700, 69500, 70200, 70300, 69800, 76700, 76700, 78200, 79600, 77400, 80200, 76600, 76000, 78600, 76100, 76100, 75700, 74700, 76800, 78400, 78900, 81900, 80000, 82800, 84500, 86800, 87000, 86300, 87000, 88000, 91600, 91000, 89900, 89500, 88700, 88700, 86900, 86900, 93600, 99900, 100100, 97400, 100800, 97100, 92200, 91800, 89200, 89200, 91200, 89800, 86500, 86600, 85500, 85500, 83400, 84100, 83500, 77400, 81800, 83000, 86100, 86400, 87000, 85700, 88400, 87800, 86500, 85800, 83400, 86400, 86600, 90700, 99400, 99500, 106800, 113700, 117800, 116300, 115100, 112100, 102800, 106500, 115800, 106300, 107200, 107600, 99500, 101700, 98300, 102400, 100200, 102500, 98900, 97400, 93200, 95200, 96800, 101300, 102300, 106900, 106700, 105900, 107900, 132500, 135200, 136700, 129700, 127800, 137800, 136700, 143300, 150000, 148800, 145800, 161700, 160100, 155000, 155000, 150600, 145800, 144300, 141000, 140300, 139400, 141300, 146100, 144500, 150000, 147400, 145200, 145500, 146100, 147000, 148400, 150000, 146000, 146500, 136600, 138900, 145600, 137100, 133400, 123100, 123400, 122500, 129800, 128300, 127100, 127100, 124800, 122500, 117400, 117100, 117500, 115300, 112500, 115500, 114900, 112900, 121300, 108900, 104200, 105800, 105600, 104600, 102900, 107400, 110600, 114700, 118600, 116300, 116000, 121400], "코스맥스": [167700, 174100, 165600, 161200, 163100, 161500, 166000, 163400, 163000, 163500, 163100, 165200, 163300, 164200, 162300, 162600, 163600, 161600, 169900, 170500, 168300, 168700, 169300, 168100, 167200, 162300, 165700, 163000, 178000, 173000, 175800, 174500, 173200, 174600, 173100, 172800, 179900, 181600, 187300, 184100, 184300, 184200, 193000, 193800, 189900, 189400, 195000, 198700, 202500, 189400, 194900, 191900, 196800, 198200, 207500, 207500, 203000, 209000, 203000, 200000, 194800, 189900, 196200, 192900, 189000, 190000, 177100, 160700, 167100, 168900, 164000, 172000, 170500, 174300, 177200, 170700, 175700, 175900, 179200, 196100, 198000, 193500, 196300, 188800, 205000, 192100, 196500, 199800, 194500, 189300, 186500, 180100, 185400, 185800, 186700, 199100, 196900, 198000, 203500, 213500, 210500, 214000, 217500, 218500, 227000, 225500, 221000, 222000, 210500, 209000, 209000, 208000, 210000, 213000, 219500, 187100, 193900, 185700, 180400, 177000, 173000, 176500, 183000, 181400, 176200, 175100, 173700, 172000, 170000, 170300, 165900, 158500, 165800, 164100, 165900, 168600, 168700, 167000, 168900, 165600, 159200, 156000, 152500, 151700, 148100, 144900, 159100, 154900, 165300, 167300, 168300, 178000, 183000, 179600, 173500, 172700, 184300, 174800, 179800, 181100, 173600, 172200, 169200, 177000, 178400, 192500, 184600, 184700, 185900, 184700, 185500, 195200, 195000, 202000, 205500, 203500, 210000, 249500, 249000, 247500, 239000, 246000, 260500, 271000, 286000, 289000, 288000, 283000, 303000, 300000, 287000, 285500, 282000, 275500, 274000, 265000, 266500, 265000, 270500, 276000, 273000, 280500, 272000, 273000, 275000, 270000, 272000, 271000, 277500, 267000, 279000, 270000, 298000, 308500, 306500, 295500, 284500, 283000, 283500, 295500, 284500, 270500, 272000, 272500, 272500, 268000, 263500, 260500, 248000, 247000, 255000, 248500, 247500, 264500, 254500, 241000, 240000, 263000, 277000, 280500, 285000, 292500, 296000, 290500, 284500, 285000, 291500], "코스메카코리아": [72300, 72300, 71100, 70700, 70300, 70200, 75500, 69500, 70300, 69300, 67700, 67900, 71200, 70000, 70100, 68000, 67500, 66200, 71400, 71600, 72400, 70900, 69300, 68300, 67200, 65000, 67600, 66600, 70000, 70400, 67900, 66100, 65900, 70000, 68500, 67700, 68300, 67000, 66700, 65700, 71700, 73800, 81200, 81100, 81400, 83600, 86600, 91800, 96400, 99400, 103000, 98100, 99200, 96500, 100100, 100100, 100500, 99500, 99900, 99900, 101400, 83500, 84400, 84800, 84400, 84500, 77600, 70800, 73600, 76600, 72700, 74000, 71300, 70500, 72800, 71700, 73300, 75100, 73800, 76800, 77300, 80600, 80300, 77800, 84600, 80800, 79700, 80700, 77800, 76700, 74400, 72700, 75200, 78200, 79300, 84600, 82800, 84300, 84200, 84900, 85300, 84900, 85500, 84900, 86000, 86800, 85300, 84300, 81000, 79400, 76900, 76600, 76800, 85500, 91200, 85900, 86700, 85300, 78500, 75100, 72600, 72800, 75300, 74500, 68700, 70600, 71400, 71700, 70100, 72200, 70200, 67100, 69200, 70000, 70400, 68800, 70800, 67800, 70100, 69000, 64700, 66400, 65200, 66700, 63900, 66100, 71100, 69000, 80600, 84300, 82200, 82600, 84400, 80400, 85500, 83000, 88700, 82100, 82100, 84800, 77500, 81000, 76400, 83400, 80700, 86500, 83200, 82400, 80000, 78800, 79400, 86000, 86600, 95900, 95900, 95000, 109400, 123400, 124500, 127200, 122900, 123600, 137200, 137300, 140000, 139500, 138700, 139000, 153900, 149800, 141200, 139400, 134200, 134500, 129100, 126100, 123600, 120900, 125700, 131000, 126600, 136400, 130800, 131400, 129900, 127400, 127300, 125800, 129600, 113800, 115400, 110000, 110400, 117000, 111400, 111800, 104100, 105300, 105100, 113200, 111200, 107500, 107300, 105100, 104300, 102200, 102200, 103000, 99000, 94600, 96900, 96200, 91800, 97100, 101400, 86100, 92300, 95500, 93000, 90900, 95600, 98400, 106900, 108700, 104800, 113200, 114500], "에이피알": [237000, 238000, 247500, 250500, 250000, 266000, 255500, 252500, 247500, 245000, 247500, 254500, 269500, 260000, 252000, 253500, 247500, 251000, 264000, 256500, 243500, 243000, 244000, 236000, 233000, 230000, 234500, 231000, 233000, 235000, 216500, 219500, 217000, 228500, 223000, 223500, 230000, 237500, 240500, 237000, 247000, 256500, 286000, 276500, 278000, 276000, 271000, 276500, 270000, 274000, 272000, 264000, 278000, 256500, 266000, 275500, 282000, 282000, 272000, 285500, 288500, 297500, 295000, 302000, 317000, 312500, 285500, 267000, 283000, 306000, 296500, 301500, 319000, 322500, 342500, 328500, 349000, 362000, 369000, 359500, 324500, 332500, 328500, 310000, 327000, 326000, 337000, 343500, 339500, 327000, 336000, 318000, 335500, 365500, 393000, 399500, 386000, 413000, 414500, 419500, 414500, 410000, 434000, 436000, 450000, 449000, 459000, 451000, 424500, 428500, 422000, 401500, 434000, 438000, 415500, 402000, 425000, 404000, 402000, 397500, 390000, 399500, 391000, 389500, 385000, 400500, 395500, 426500, 401000, 405000, 389000, 366000, 405000, 410500, 410500, 394000, 416000, 399500, 408500, 378000, 385500, 373000, 355500, 371000, 381000, 363000, 386000, 385500, 408000, 402000, 382500, 378500, 410000, 385500, 365500, 375000, 380000, 375000, 385500, 393000, 368000, 365000, 357500, 370000, 354000, 354500, 333500, 325000, 315000, 320000, 338000, 359500, 357500, 378000, 384500, 387000, 385500, 397000, 399500, 390500, 396500, 383500, 386000, 385000, 409500, 440500, 442000, 434500, 461500, 464500, 432500, 419000, 406000, 394000, 384000, 377000, 368500, 361000, 372000, 369000, 361500, 353000, 353000, 367000, 366000, 361500, 368500, 368500, 362500, 366000, 366000, 366000, 361000, 379000, 371500, 352000, 283000, 294500, 298000, 325500, 331500, 310000, 319000, 291000, 284500, 282000, 278000, 289000, 282500, 261000, 263500, 246000, 254000, 269000, 255500, 247000, 251000, 251500, 241500, 236000, 240000, 231000, 235000, 243500, 235500, 257000, 263500], "클리오": [13510, 13400, 13390, 13030, 13100, 13140, 13480, 13650, 13670, 13670, 13500, 13510, 13370, 13290, 13170, 13350, 13310, 13520, 13630, 13720, 13500, 13490, 13450, 13280, 13250, 13300, 13090, 13030, 13900, 13930, 13390, 13170, 13210, 13210, 13080, 13010, 13000, 12940, 12950, 12720, 12820, 12530, 12790, 13140, 13390, 13350, 13270, 13330, 13260, 12980, 13380, 13450, 13330, 13080, 13630, 13650, 13580, 13540, 13510, 13510, 13330, 13420, 13560, 13300, 13090, 12970, 12480, 11170, 11990, 11950, 11300, 11640, 11610, 11640, 11690, 11680, 11810, 11820, 11600, 11990, 11700, 11890, 12050, 11700, 11930, 11720, 11650, 11980, 11510, 11660, 11600, 11650, 11860, 12140, 12020, 11900, 12060, 12110, 12440, 12380, 12470, 12450, 12590, 12600, 13410, 13290, 13320, 13640, 13290, 13220, 12950, 12920, 13070, 13750, 12840, 12300, 12370, 12120, 12260, 12070, 11790, 11800, 12030, 12050, 11590, 11160, 11540, 10910, 10840, 10520, 10590, 10060, 10210, 10390, 10540, 10740, 10680, 10640, 10650, 10320, 10020, 9980, 9510, 9430, 9420, 9040, 9950, 9600, 10060, 10010, 10140, 9950, 11230, 12000, 11160, 11560, 11010, 10600, 10960, 10740, 9980, 9950, 9810, 10200, 9950, 10480, 10010, 9800, 10300, 10820, 10720, 10860, 10850, 11170, 11190, 11310, 11660, 12160, 11500, 14230, 13500, 12920, 13040, 12650, 12810, 13320, 12850, 12770, 13430, 13400, 13240, 12850, 12510, 12370, 12160, 11900, 12050, 12100, 12450, 12510, 12310, 12110, 12260, 12340, 12180, 12080, 11900, 12110, 12020, 11700, 12110, 11980, 11960, 12430, 12180, 11850, 11210, 11020, 10700, 11340, 11430, 11360, 11180, 11180, 10970, 10700, 10710, 10850, 10850, 11020, 11290, 11240, 10980, 11120, 10770, 10510, 10770, 10990, 11060, 10400, 10210, 10210, 9950, 10710, 10400, 10160, 10310], "연우": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]};
+const PEERS=[{"t": "251970.KQ", "n": "펌텍코리아", "px": 76600.0, "mc": 949716385792, "pe": null, "fpe": 13.563406, "rg": 0.108, "opm": 0.15198, "y52": 0.40699816}, {"t": "161890.KS", "n": "한국콜마", "px": 121400.0, "mc": 2865656233984, "pe": null, "fpe": 12.559747, "rg": 0.213, "opm": 0.10375, "y52": 0.7391304}, {"t": "192820.KS", "n": "코스맥스", "px": 291500.0, "mc": 3307260346368, "pe": null, "fpe": 15.051352, "rg": 0.495, "opm": 0.084580004, "y52": 0.7210145}, {"t": "241710.KQ", "n": "코스메카코리아", "px": 114500.0, "mc": 1222859948032, "pe": null, "fpe": 13.676684, "rg": 0.398, "opm": 0.12905, "y52": 0.59212375}, {"t": "278470.KS", "n": "에이피알", "px": 263500.0, "mc": 9864953724928, "pe": null, "fpe": 12.773718, "rg": 1.003, "opm": 0.23788999, "y52": 0.03838384}, {"t": "237880.KQ", "n": "클리오", "px": 10310.0, "mc": 180678868992, "pe": null, "fpe": 6.751801, "rg": 0.057, "opm": 0.08853, "y52": -0.24122477}, {"t": "115960.KQ", "n": "연우", "px": null, "mc": null, "pe": null, "fpe": null, "rg": null, "opm": null, "y52": null}];
+const $=s=>document.querySelector(s);
+const nf=(x,d=0)=>x==null?'-':Number(x).toLocaleString('ko-KR',{maximumFractionDigits:d,minimumFractionDigits:d});
+const pc=(x,d=0)=>x==null?'-':(x>0?'+':'')+nf(x,d)+'%';
+const cls=x=>x>0?'up':x<0?'down':'';
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ---------- 데이터 (억원) ---------- */
+const PX=76600, SH=1240;                 // 11/24 종가, 주식수(만주)
+const MC=PX*SH/1e4;                      // 9,498억
+const Q=[{q:'1Q25',rev:918,op:134},{q:'2Q25',rev:1052,op:194},{q:'3Q25',rev:977,op:153},{q:'4Q25',rev:771,op:83},{q:'1Q26',rev:918,op:130,ni:127},{q:'2Q26',rev:1168,op:217,ni:182},{q:'3Q26',rev:1238,op:251,ni:183}];
+const Y=[{y:'2024',rev:3382,op:484},{y:'2025',rev:3720,op:565},{y:'2026E',rev:4600,op:830,e:1},{y:'2027E',rev:5634,op:1036,e:1},{y:'2028E',rev:6574,op:1301,e:1}];
+const PROD={y:['2025','2026E','2027E','2028E'],v:[6.27,7.1,8.1,9.3]};
+const PRODQ={q:['3Q25','2Q26','3Q26'],v:[1.63,1.77,2.03]};
+const FLOOR={f:['1공장','2공장','3공장','4공장','5공장','6공장','7공장'],v:[4348,2057,1217,3728,1129,2075,2569],inj:[0,1,0,1,0,1,1]};
+const OPMQ=Q.map(r=>+(r.op/r.rev*100).toFixed(1));
+const CONS=[['유안타','11/16','108,000',800,'1,100'],['한화','11/10','110,000',740,'1,230'],['현대차','11/13','100,000',770,'1,100'],['하나','11/10','100,000',704,'-'],['IBK','11/10','85,000',580,'-'],['교보','11/16','NR',850,'-']];
+// 시총 시나리오 (지배순이익 × PER)
+const NI27=713, NI28=868, NI27C=741;
+
+const PAGES=[['sum','요약'],['fin','실적'],['cap','증설·생산'],['mar','마진'],['mkt','고객·업종'],['cons','컨센서스'],['val','밸류'],['px','주가'],['pitch','5분 피칭'],['qa','예상 질의'],['src','출처']];
+function nav(){const h=(location.hash||'#sum').slice(1);document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id===h));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.p===h));window.scrollTo(0,0);draw(h)}
+function card(h,cap,body){return `<div class="card">${h?`<h2>${h}</h2>`:''}${cap?`<p class="cap">${cap}</p>`:''}${body}</div>`}
+function kpi(l,v,s,go){return `<button class="kpi" onclick="location.hash='${go}'"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></button>`}
+const mcap=(ni,m)=>ni*m;               // 억원
+const add=v=>v-MC;
+const fa=v=>`${v>0?'+':''}${nf(v)}억`;
+
+function build(){
+ $('#tabs').innerHTML=PAGES.map(([k,n])=>`<a class="tab" data-p="${k}" href="#${k}">${n}</a>`).join('');
+ const T=mcap(NI28,15),E=mcap(NI27,15),B=mcap(NI27,11),C=mcap(NI27C,15),U=mcap(NI28,18);
+ let H='';
+ /* 요약 */
+ H+=`<section class="page" id="sum"><div class="page-head"><h1>펌텍코리아 (251970) · 매수</h1><p>K뷰티 물량을 용기로 받는 회사 · 사출 병목이 풀리며 이익이 커지는 구간 · 11/24 종가 ${nf(PX)}원</p></div>
+ <div class="kpis">
+ ${kpi('시가총액',nf(MC)+'억','2027E 컨센서스 PER 약 12.8배','val')}
+ ${kpi('목표 시총 (2028E × 15배)',nf(T)+'억',`시총 애드 ${fa(add(T))} (${pc(add(T)/MC*100)})`,'val')}
+ ${kpi('하방 (2027E × 11배)',nf(B)+'억',`${fa(add(B))} (${pc(add(B)/MC*100)})`,'val')}
+ ${kpi('3Q26 매출 / 영업이익','1,238 / 251억','YoY +27% / +64% · OPM 20.3%','fin')}
+ ${kpi('3Q26 생산량','2.03억 개','YoY +24.5% · 상반기 +3.6%','cap')}
+ ${kpi('사출 1층 면적','+80%','5,785㎡ → 10,429㎡ (6·7공장)','cap')}
+ </div>
+ <div class="two">
+ ${card('한 장 요약','',`<table class="vs"><tbody>
+ <tr><td>의견</td><td>매수 · 목표 시총 ${nf(T)}억(${fa(add(T))}) · 신규는 2027E × 15배 시총 ${nf(E)}억 아래에서 분할</td></tr>
+ <tr><td>탑다운</td><td>한국 화장품 수출 중량 1~10월 +25%. 용기는 어느 브랜드가 뜨든 물량을 가져감 → 업종 하락일에 61%만 반영</td></tr>
+ <tr><td>병목 해소</td><td>상반기 생산 +3.6%는 사출 부족 때문. 6공장 사출 가동(9월) 뒤 3Q 생산 +24.5%, 7공장 11월 착공</td></tr>
+ <tr><td>마진</td><td>프리몰드 74%(고객 전용 금형 대비 수익성 약 2배) + 레진 급등 때 올린 판가 유지 → 3Q OPM 20.3%</td></tr>
+ <tr><td>컨센서스</td><td>6개사 목표가 평균 100,600원, 2027E 순이익 741억(내 추정 713억을 넘어섬)</td></tr>
+ <tr><td>리스크</td><td>7공장 지연(과거 두 번 4개월씩), ODM 재고 조정(올해 매출 증가의 74%가 ODM 경유), 2028년 감가상각</td></tr>
+ <tr><td>유동성</td><td>20일 평균 거래대금 73억 → 100억(펀드 1%) 약 7거래일</td></tr></tbody></table>`)}
+ ${card('체크 포인트','분기마다 확인',`<div class="tl">
+ <div class="st"><div class="w">4Q26</div><div class="e">매출 1,250~1,270억</div><div class="x">회사 가이던스, YoY +60% 초중반</div><span class="pill wait">대기</span></div>
+ <div class="st"><div class="w">4Q26</div><div class="e">로레알 콤팩트 첫 출고</div><div class="x">스틱에 이은 두 번째 품목</div><span class="pill wait">대기</span></div>
+ <div class="st"><div class="w">분기</div><div class="e">OPM 18% 유지</div><div class="x">두 분기 연속 하회 시 재점검</div></div>
+ <div class="st"><div class="w">2027 상반기</div><div class="e">부국 튜브 +30% 전부 반영</div><div class="x">단계적 가동 중</div></div>
+ <div class="st"><div class="w">2028 초</div><div class="e">7공장 준공</div><div class="x">1Q28 가동률 10% 가정</div></div>
+ </div>`)}
+ </div></section>`;
+ /* 실적 */
+ H+=`<section class="page" id="fin"><div class="page-head"><h1>실적</h1><p>억원, 연결 · DART 분기·반기·사업보고서 · 2026E~2028E는 내 보고서(11/4) 추정</p></div>
+ <div class="two">${card('분기 매출·영업이익률','',`<div class="ch-box"><canvas id="cQ"></canvas></div>`)}
+ ${card('연간 매출·영업이익','2026E 영업이익은 9M 597억 + 4Q 약 230억으로 상향(보고서 766억은 낮음)',`<div class="ch-box"><canvas id="cY"></canvas></div>`)}</div>
+ ${card('외울 숫자','',`<div class="tw"><table><thead><tr><th>분기</th><th class="n">매출</th><th class="n">YoY</th><th class="n">영업이익</th><th class="n">YoY</th><th class="n">OPM</th><th class="n">지배순이익</th></tr></thead><tbody>${Q.map((r,i)=>{const p=i>=4?Q[i-4]:null;return `<tr><td>${r.q}</td><td class="n">${nf(r.rev)}</td><td class="n ${p?cls(r.rev-p.rev):''}">${p?pc((r.rev/p.rev-1)*100):'-'}</td><td class="n">${nf(r.op)}</td><td class="n ${p?cls(r.op-p.op):''}">${p?pc((r.op/p.op-1)*100):'-'}</td><td class="n">${nf(r.op/r.rev*100,1)}%</td><td class="n">${r.ni==null?'-':nf(r.ni)}</td></tr>`}).join('')}
+ <tr><td><b>2025</b></td><td class="n"><b>3,720</b></td><td class="n up">+10%</td><td class="n"><b>565</b></td><td class="n up">+17%</td><td class="n">15.2%</td><td class="n"><b>344</b></td></tr></tbody></table></div>
+ <ul class="def" style="margin-top:10px"><li>외우는 법: 2025 "3,720 / 565 / 344", 3Q26 "1,238 / 251, 마진 20%"</li><li>1Q·3Q 지배순이익엔 자산처분이익 포함(9M 211억, 3Q 투자부동산 71억) → 이익 체력은 영업이익으로</li><li>4Q25가 낮았던 이유: 관세와 4공장 지연(조립 먼저, 사출 늦게 → 생산 -19.6%)</li><li>사업부(3Q26): 펌프 927억(+24%, OPM 19.9%) · 튜브 325억(+49%, 23.1%) · 건기식 8억</li></ul>`)}
+ </section>`;
+ /* 증설 */
+ H+=`<section class="page" id="cap"><div class="page-head"><h1>증설·생산</h1><p>병목은 수요가 아니라 사출 · 사출기는 무게 때문에 1층에만 설치</p></div>
+ <div class="two">${card('사업 영역과 병목','자료: KUVIC 리서치 3팀 펌텍코리아 보고서',`<img class="fig" src="img/process.png" alt="금형-사출-후가공-조립 공정과 사출 병목"><p class="figcap">사출의 70%는 협력사, 30%는 펌텍 직접. 회사는 자체·협력사 증설을 합쳐도 수주 대비 사출이 모자라다고 설명(11/23 탐방)</p>`)}
+ ${card('공장별 1층 면적 (㎡)','건축물대장·등기 직접 대조. 진한 색 = 1층을 사출로 쓰는 공장',`<div class="ch-box"><canvas id="cF"></canvas></div><p class="figcap">사출 1층 5,785㎡(2025) → 10,429㎡(+80%). 단, 협력사 증설도 생산능력이라 1층 면적이 곧 생산량은 아님(회사)</p>`)}</div>
+ <div class="two">${card('분기 생산량 (억 개)','분기보고서 누적 차감',`<div class="ch-box"><canvas id="cPQ"></canvas></div><p class="figcap">3Q26 YoY +24.5%, QoQ +14.7%. 3Q 가동률 89%, 1~3Q 85.4%</p>`)}
+ ${card('연간 생산량 경로 (억 개)','내 보고서 추정',`<div class="ch-box"><canvas id="cPY"></canvas></div><p class="figcap">2025 → 2028E +48%. 7공장은 과거 두 번 4개월씩 지연 → 2028년 1~2월 준공, 1Q28 가동률 10%만 반영</p>`)}</div>
+ </section>`;
+ /* 마진 */
+ H+=`<section class="page" id="mar"><div class="page-head"><h1>마진</h1><p>마진은 품목이 아니라 금형이 정한다</p></div>
+ <div class="two">${card('분기 영업이익률','',`<div class="ch-box"><canvas id="cM"></canvas></div><p class="figcap">4Q는 계절적으로 낮음(4Q25 10.8%). 회사도 3Q 20%는 높았다고 봐서 18%대를 기준으로 둠</p>`)}
+ ${card('원가는 올랐는데 마진은 올랐다','분기보고서 원재료 가격',`<table class="vs"><thead><tr><th></th><th class="n">2024</th><th class="n">2025</th><th class="n">1~3Q26</th></tr></thead><tbody>
+ <tr><td>사출품 매입단가</td><td class="n">46원</td><td class="n">48원</td><td class="n">52원</td></tr>
+ <tr><td>원료 단가</td><td class="n">132원</td><td class="n">148원</td><td class="n">162원</td></tr>
+ <tr><td>매출총이익률(3Q)</td><td class="n">-</td><td class="n">23.0%</td><td class="n"><b>26.7%</b></td></tr></tbody></table>
+ <ul class="def" style="margin-top:10px"><li><b>프리몰드 74%:</b> 금형을 먼저 만들어 카탈로그로 판매, 장식만 바꿔 여러 브랜드에 → 고객 전용 금형 대비 수익성 약 2배. 연우는 약 50%</li><li><b>판가:</b> 2026년 5~6월 레진 급등 때 인상, 레진이 내려와도 유지(회사). 튜브처럼 원료가 많이 드는 제품은 약 10% 인상</li><li><b>일회성:</b> 9M OPM 개선 1.7%p 중 약 1.2%p는 금형비 감소(61.7억 → 30.3억)</li><li><b>옵션:</b> 쿠션(콤팩트) 비중 펌프사업부의 약 15%, 글로벌 쿠션 신제품 3건 → 8건, 로레알 콤팩트 4Q 첫 출고</li></ul>`)}</div>
+ </section>`;
+ /* 고객·업종 */
+ H+=`<section class="page" id="mkt"><div class="page-head"><h1>고객·업종</h1><p>어느 브랜드가 뜨든 물량을 가져가는 구조</p></div>
+ <div class="two">${card('판매 채널 (1H26)','',`<div class="ch-box"><canvas id="cCh"></canvas></div><p class="figcap">ODM 재고 조정이 바로 매출로 넘어오는 구조 → 올해 매출 증가의 74%가 ODM 경유</p>`)}
+ ${card('업종 대비 움직임','1년 일간 수익률, 화장품 업종(ODM 3사 + 브랜드 4사) 대비',`<table class="vs"><tbody>
+ <tr><td>베타</td><td>펌텍 <b>0.90</b> · 코스맥스 1.06 · 한국콜마 1.13 · 코스메카 1.33</td></tr>
+ <tr><td>업종 -2% 이상 48일</td><td>업종 -3.34% · ODM -3.78% · <b>펌텍 -2.05%</b>(61%만 반영)</td></tr>
+ <tr><td>업종 +2% 이상 49일</td><td>업종 +4.13% · 펌텍 +3.81%(92% 반영)</td></tr>
+ <tr><td>점유율</td><td>국내 주요 용기 14사 중 20.2%(2021) → 24.5%(2025), 연우 27.3% → 16.7%</td></tr>
+ <tr><td>주의</td><td>절대 변동성은 연 60%로 낮지 않음 → "업종보다 덜 빠진다"까지만</td></tr></tbody></table>`)}</div>
+ ${card('화장품 밸류체인 비교','Yahoo Finance 11/24 · 매출 성장·영업이익률은 최근 4분기',`<div class="tw"><table><thead><tr><th>회사</th><th>위치</th><th class="n">시총(억원)</th><th class="n">선행 PER</th><th class="n">매출 성장</th><th class="n">영업이익률</th><th class="n">1년 주가</th></tr></thead><tbody>${PEERS.filter(p=>p.mc).map(p=>{const pos={'펌텍코리아':'용기','한국콜마':'ODM','코스맥스':'ODM','코스메카코리아':'ODM','에이피알':'브랜드(디바이스)','클리오':'브랜드(색조)'}[p.n];return `<tr${p.n==='펌텍코리아'?' style="font-weight:700"':''}><td>${p.n}</td><td>${pos}</td><td class="n">${nf(p.mc/1e8)}</td><td class="n">${nf(p.fpe,1)}배</td><td class="n ${cls(p.rg)}">${pc(p.rg*100)}</td><td class="n">${pc(p.opm*100,1)}</td><td class="n ${cls(p.y52)}">${pc(p.y52*100)}</td></tr>`}).join('')}</tbody></table></div>`)}
+ ${card('지배구조','자료: KUVIC 리서치 3팀',`<img class="fig" src="img/structure.png" alt="펌텍코리아 자회사 구조" style="max-width:760px">`)}
+ </section>`;
+ /* 컨센서스 */
+ H+=`<section class="page" id="cons"><div class="page-head"><h1>컨센서스</h1><p>3분기 실적 뒤 리포트 6개 모두 목표가 상향</p></div>
+ ${card('증권사 추정','',`<div class="tw"><table><thead><tr><th>증권사</th><th>날짜</th><th class="n">목표가</th><th class="n">2027E 지배순이익</th><th class="n">2028E 영업이익</th></tr></thead><tbody>${CONS.map(c=>`<tr><td>${c[0]}</td><td>${c[1]}</td><td class="n">${c[2]}</td><td class="n">${c[3]}</td><td class="n">${c[4]}</td></tr>`).join('')}
+ <tr><td><b>평균</b></td><td></td><td class="n"><b>100,600</b></td><td class="n"><b>741</b></td><td class="n"><b>1,143</b></td></tr>
+ <tr><td><b>내 추정</b></td><td>11/6</td><td class="n"><b>105,000</b></td><td class="n"><b>713</b></td><td class="n"><b>1,246</b></td></tr></tbody></table></div>
+ <ul class="def" style="margin-top:10px"><li><b>2027년은 시장이 나를 넘어섬:</b> 컨센서스 741억이 내 추정보다 4% 높음 → "컨센서스보다 24% 높다"는 말은 쓰지 않음</li><li><b>차이는 2028년:</b> 영업이익 컨센서스 1,143억 vs 내 추정 1,246억(+9%). 6·7공장 사출과 협력사 증설이 함께 붙는 해</li><li>4Q26E 매출/영업이익: 유안타 1,350/256 · 한화 1,270/244 · 현대차 1,259/233 · 교보 1,265/255</li></ul>`)}
+ </section>`;
+ /* 밸류 */
+ const rows=[['하방','2027E 내 추정 713억 × 11배(정체기)',B],['진입선','2027E 내 추정 713억 × 15배(증설기)',E],['컨센서스','2027E 컨센서스 741억 × 15배',C],['목표','2028E 내 추정 868억 × 15배',T],['Bull','2028E 868억 × 18배(색조 확장 인정)',U]];
+ H+=`<section class="page" id="val"><div class="page-head"><h1>밸류에이션</h1><p>지배순이익 × PER = 시총 · 시총 애드 기준</p></div>
+ <div class="kpis">${kpi('지금 시총',nf(MC)+'억','2027E 컨센서스 PER 약 12.8배','val')}${kpi('목표 시총',nf(T)+'억',fa(add(T))+' · 2028E × 15배','val')}${kpi('하방 시총',nf(B)+'억',fa(add(B))+' · 2027E × 11배','val')}${kpi('위아래 비율',nf(add(T)/-add(B),1)+' : 1','목표 애드 ÷ 하방','val')}</div>
+ <div class="two">${card('시나리오별 시총','',`<div class="ch-box"><canvas id="cV"></canvas></div><div class="tw"><table><thead><tr><th>시나리오</th><th>가정</th><th class="n">시총</th><th class="n">시총 애드</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td class="n">${nf(r[2])}억</td><td class="n ${cls(add(r[2]))}">${fa(add(r[2]))}</td></tr>`).join('')}</tbody></table></div>`)}
+ ${card('12M Forward PER 밴드','자료: KUVIC 리서치 3팀(11월 초 미리보기). 정체기 11배, 4공장 증설기 15배',`<img class="fig" src="img/perband.png" alt="펌텍 12개월 선행 PER 밴드"><p class="figcap">국내 상장 용기사가 펌텍뿐이라 피어 대신 자기 역사 배수를 씀. 12M Fwd 이익이 2028년이라 2028E에 적용</p>`)}</div>
+ ${card('직접 계산','',`<div class="fin-in"><label>지배순이익(억)<input type="number" id="vN" value="868" step="10"></label><label>PER(배)<input type="number" id="vP" value="15" step="0.5"></label></div><div>시총 <span class="big" id="vOut"></span> <span id="vUp"></span></div>`)}
+ </section>`;
+ /* 주가 */
+ H+=`<section class="page" id="px"><div class="page-head"><h1>주가</h1><p>최근 1년 일봉 · Yahoo</p></div>
+ ${card('펌텍코리아 종가','52주 저점 32,550원(2026.6.26) · 고점 79,900원(11/19) · 연 변동성 60%',`<div class="ch-box tall"><canvas id="cP"></canvas></div>`)}
+ ${card('상대 수익률 (1년 전 = 100)','ODM·브랜드와 비교',`<div class="ch-box"><canvas id="cR"></canvas></div>`)}
+ </section>`;
+ /* 피칭 */
+ H+=`<section class="page" id="pitch"><div class="page-head"><h1>5분 피칭</h1><p>결론 → 산업 → 병목 → 마진 → 밸류 → 리스크 · 금액은 시총 기준</p></div>
+ ${card('스크립트','',`<div class="script">
+ <p><span class="tg">[0:00 결론]</span>첫 번째 종목은 펌텍코리아입니다. 매수 의견입니다. 지금 시총 9,500억에서 2028년 지배순이익 868억에 증설기 평균 PER 15배를 주면 1조 3,000억으로, 3,500억이 더해집니다. 이익 정체기 배수인 11배로 돌아가면 7,800억으로, 하방은 1,700억입니다.</p>
+ <p><span class="tg">[0:30 산업 → 회사]</span>K뷰티 수출 물량은 올해 1~10월 25% 늘었습니다. 펌텍은 이 물량을 브랜드나 ODM이 아니라 용기로 받는 회사입니다. 어느 브랜드가 뜨든 물량을 가져가기 때문에 업종보다 덜 흔들립니다. 화장품 업종이 2% 넘게 빠진 날 ODM은 평균 3.8% 빠졌지만 펌텍은 2.1%만 빠졌고, 오르는 날은 상승폭의 90% 이상을 따라갔습니다.</p>
+ <p><span class="tg">[1:20 포인트 1: 사출 병목이 풀린다]</span>올해 상반기 생산이 3.6%밖에 늘지 못한 건 수요가 아니라 사출이 막혔기 때문입니다. 사출의 70%는 협력사가, 30%는 펌텍이 직접 합니다. 사출기는 무거워서 1층에만 둘 수 있고, 6공장 1층은 전부 사출 라인입니다. 9월 가동 뒤 3분기 생산량은 1년 전보다 25% 늘었고, 제가 현장에서 확인한 7공장도 이달 착공해 1층을 사출로 씁니다.</p>
+ <p><span class="tg">[2:20 포인트 2: 마진은 금형이 정한다]</span>펌텍은 금형을 먼저 만들어 카탈로그로 파는 프리몰드가 매출의 74%입니다. 같은 금형을 장식만 바꿔 여러 브랜드에 팔기 때문에 수익성이 고객 전용 금형의 약 2배입니다. 여기에 레진 급등 때 올린 판가를 유지하면서 3분기 영업이익률이 20%를 넘었습니다. 회사도 20%는 높았다고 보기 때문에 저는 18%대를 기준으로 둡니다. 덤으로 로레알이 올해 콤팩트를 주문해 4분기에 첫 출고가 나갑니다.</p>
+ <p><span class="tg">[3:20 밸류에이션]</span>3분기 이후 증권사 여섯 곳이 모두 목표가를 올렸고, 2027년 순이익 컨센서스는 741억으로 제 추정을 넘어섰습니다. 이제 시총 애드는 2028년 이익과 배수에서 나옵니다. 2027년 기준 15배면 시총 1조 700억으로 1,200억, 2028년 기준이면 3,500억이 더해집니다. 그래서 1조 700억, 주가로 8만 6천원 아래에서만 새로 사겠습니다.</p>
+ <p><span class="tg">[4:20 리스크와 관리]</span>리스크는 세 가지입니다. 7공장 지연, 장기 계약이 없어 ODM 재고 조정이 바로 매출로 넘어오는 구조, 그리고 2028년 신공장 감가상각입니다. 과거 증설이 두 번 모두 4개월씩 늦어서 2028년 1분기 가동률은 10%만 넣었습니다. 영업이익률이 두 분기 연속 18%를 밑돌면 논리를 다시 보겠습니다. 하루 거래대금이 70억대라 펀드 1%는 7거래일이면 담을 수 있습니다.</p></div>`)}
+ ${card('외울 숫자','',`<ul class="def"><li>시총 9,500억 → 목표 1조 3,000억(+3,500억) · 진입선 1조 700억(+1,200억) · 하방 7,800억(-1,700억)</li><li>2025 "3,720 / 565 / 344" · 3Q26 "1,238 / 251, 마진 20%"</li><li>수출 물량 +25% · 업종 하락일 61%만 반영 · 베타 0.90</li><li>상반기 생산 +3.6% → 3Q +24.5% · 사출 1층 +80% · 사출 외주 70%</li><li>프리몰드 74% · 사출품 단가 46 → 52원인데 GPM 23.0 → 26.7%</li><li>컨센서스 6사 목표가 평균 100,600원 · 2027E 741억 vs 내 713억 · 2028E 영업이익 1,143억 vs 내 1,246억</li></ul>`)}
+ </section>`;
+ /* 질의 */
+ const QA=[
+ ['추정이 컨센서스보다 높은가?','2027년은 이제 컨센서스(741억)가 제 추정(713억)보다 4% 높습니다. 남은 차이는 2028년 영업이익이고, 제 추정 1,246억이 컨센서스 1,143억보다 9% 높습니다. 6·7공장 사출과 협력사 증설이 함께 붙는 해라서, 시총 애드 3,500억 중 일부가 이 차이에서 나옵니다.'],
+ ['3분기 마진이 일회성 아닌가?','일부는 맞습니다. 9개월 영업이익률 개선폭 1.7%p 중 약 1.2%p는 금형비 감소(61.7억 → 30.3억)였습니다. 다만 사출품 단가가 48원에서 52원으로 올랐는데도 매출총이익률은 23.0%에서 26.7%로 올랐고, 판가를 내릴 계획은 없다고 합니다. 그래서 18%대를 기준으로 봅니다.'],
+ ['레진이 다시 오르면?','레진은 펌텍이 사서 협력사에 공급하고 헤지는 하지 않습니다. 원료가 많이 드는 제품일수록 판가를 더 올렸습니다(튜브 약 10%). 다시 오르면 시차를 두고 전가할 수 있지만 한두 분기는 마진이 눌릴 수 있습니다.'],
+ ['서구 쿠션 데이터가 판매 데이터인가?','아닙니다. 출시 건수(3건 → 8건), 세포라 색상 수, 로레알 CEO 발언입니다. 그래서 쿠션은 매수 근거가 아니라 옵션입니다. 콤팩트 비중이 2028년에 20%로만 가도 시총 1조 2,500억 수준입니다.'],
+ ['6공장이 진짜 돌고 있나?','3분기 생산량이 2억 300만 개로 1년 전보다 24.5%, 전 분기보다 14.7% 늘었습니다. 상반기 증가율이 3.6%였으니 숫자가 바뀐 건 9월 가동 이후입니다.'],
+ ['7공장이 또 늦으면?','11월에 착공했습니다. 과거 두 번 모두 4개월씩 늦어서 2028년 1~2월 준공, 1Q28 가동률 10%로 넣었습니다. 더 늦으면 2028년 물량이 줄어 목표 시총 애드가 작아지므로 공정을 분기마다 확인합니다.'],
+ ['왜 15배이고 왜 2028년인가?','국내 상장 용기사가 펌텍뿐이라 자기 역사 배수를 썼습니다. 정체기(2020~23년) 11배, 4공장 증설기 15배였습니다. 12개월 뒤 시점의 12M Fwd 이익이 2028년이라 2028년에 적용했습니다.'],
+ ['목표가가 다 올라왔는데 과열 아닌가?','과열 신호가 일부 있는 건 맞습니다. 11/19 고점 79,900원 뒤 밀렸습니다. 그래서 보유는 유지하되, 신규는 2027E × 15배 시총 1조 700억(주가 8만 6천원) 아래에서만 사겠습니다.'],
+ ['틀리면 얼마나 잃나?','이익이 컨센서스 수준이면 2027E 15배로 시총 1조 1,100억(+1,600억), 배수가 정체기 11배로 돌아가면 7,800억(-1,700억)입니다. 업종 하락일에 61%만 빠진 이력이 하방 판단의 보조 근거입니다.'],
+ ['메자닌 하우스가 왜 우량주를?','기준은 위험 대비 기대수익입니다. 목표 +3,500억 대 하방 -1,700억으로 2:1이고, 1%를 7일 안에 사고팔 수 있습니다. 7공장 자금을 CB로 조달한다면 하방을 채권으로 막는 더 좋은 구조라 그것도 보겠습니다.'],
+ ['내부자 매도는?','박상규 부사장이 11/12에 3,000주(71,166원)를 장내매도했습니다. 지분 대비 작은 규모입니다.'],
+ ['숏 상대는?','한국콜마는 쓰지 않습니다. 펌텍의 2위 고객이고, 전방이 먼저 열어 줘야 같이 가는 구조입니다. 헤지는 지수나 업종 바스켓으로 합니다.']];
+ H+=`<section class="page" id="qa"><div class="page-head"><h1>예상 질의</h1><p>눌러서 답 보기 · 금액은 시총 기준</p></div>${card('','',`<div class="qa">${QA.map(([q,a])=>`<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`)}</section>`;
+ H+=`<section class="page" id="src"><div class="page-head"><h1>출처</h1></div>${card('','',`<ul class="def"><li>DART 펌텍코리아 분기·반기·사업보고서(생산실적, 원재료 가격, 판매 채널)</li><li>리포트: 유안타(11/16)·한화(11/10)·현대차(11/13)·하나(11/10)·IBK(11/10)·교보(11/16)</li><li>KUVIC 리서치 3팀 펌텍코리아 보고서(2026.11) · 11/5 7공장 현장 · 11/23 탐방</li><li>건축물대장·등기(공장별 1층 면적) · 관세청 화장품 수출 중량</li><li>주가·피어: Yahoo Finance(11/24)</li></ul>`)}</section>`;
+ $('#main').innerHTML=H;
+ $('#foot').textContent='리서치 정리 · 투자 권유 아님';
+ $('#stamp').textContent='기준 2026-11-24';
+ ['vN','vP'].forEach(id=>document.getElementById(id).addEventListener('input',calc));calc();
+}
+function calc(){const v=+$('#vN').value*+$('#vP').value;$('#vOut').textContent=nf(v)+'억';const a=v-MC;$('#vUp').innerHTML=`지금 대비 <span class="${cls(a)}">${a>0?'+':''}${nf(a)}억 (${pc(a/MC*100)})</span>`}
+function mk(id,cfg){const el=document.getElementById(id);if(!el)return;const old=Chart.getChart(el);if(old)old.destroy();Chart.defaults.color=css('--sub');Chart.defaults.borderColor=css('--grid');Chart.defaults.font.family='Pretendard Variable, Pretendard, sans-serif';new Chart(el,cfg)}
+function draw(h){
+ const c1=css('--c1'),c2=css('--c2'),c3=css('--c3'),c4=css('--c4'),c5=css('--c5'),c6=css('--c6');
+ const O={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}};
+ if(h==='fin'){
+  mk('cQ',{data:{labels:Q.map(r=>r.q),datasets:[{type:'bar',label:'매출(억)',data:Q.map(r=>r.rev),backgroundColor:c1,yAxisID:'y'},{type:'bar',label:'영업이익(억)',data:Q.map(r=>r.op),backgroundColor:c2,yAxisID:'y'},{type:'line',label:'OPM(%)',data:OPMQ,borderColor:c5,yAxisID:'y1',tension:.3}]},options:{...O,scales:{y:{beginAtZero:true},y1:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}});
+  mk('cY',{data:{labels:Y.map(r=>r.y),datasets:[{type:'bar',label:'매출(억)',data:Y.map(r=>r.rev),backgroundColor:Y.map(r=>r.e?c1+'88':c1)},{type:'line',label:'영업이익(억)',data:Y.map(r=>r.op),borderColor:c2,yAxisID:'y1'}]},options:{...O,scales:{y:{beginAtZero:true},y1:{position:'right',grid:{display:false},beginAtZero:true}}}});
+ }
+ if(h==='cap'){
+  mk('cF',{type:'bar',data:{labels:FLOOR.f,datasets:[{data:FLOOR.v,backgroundColor:FLOOR.inj.map(x=>x?c5:c6+'88')}]},options:{...O,plugins:{legend:{display:false}}}});
+  mk('cPQ',{type:'bar',data:{labels:PRODQ.q,datasets:[{data:PRODQ.v,backgroundColor:[c6,c6,c1]}]},options:{...O,plugins:{legend:{display:false}}}});
+  mk('cPY',{type:'bar',data:{labels:PROD.y,datasets:[{data:PROD.v,backgroundColor:PROD.y.map(y=>y.includes('E')?c1+'88':c1)}]},options:{...O,plugins:{legend:{display:false}}}});
+ }
+ if(h==='mar') mk('cM',{type:'line',data:{labels:Q.map(r=>r.q),datasets:[{label:'영업이익률(%)',data:OPMQ,borderColor:c5,backgroundColor:c5,tension:.3},{label:'기준선 18%',data:Q.map(()=>18),borderColor:c6,borderDash:[5,4],pointRadius:0}]},options:{...O,scales:{y:{ticks:{callback:v=>v+'%'}}}}});
+ if(h==='mkt') mk('cCh',{type:'doughnut',data:{labels:['브랜드 직거래','ODM/OEM','판매 파트너'],datasets:[{data:[44.6,38.0,17.4],backgroundColor:[c1,c2,c3]}]},options:{...O,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.label+' '+c.raw+'%'}}}}});
+ if(h==='val'){const T=NI28*15,E=NI27*15,B=NI27*11,C=NI27C*15,U=NI28*18;mk('cV',{type:'bar',data:{labels:['하방','지금','진입선','컨센서스','목표','Bull'],datasets:[{data:[B,MC,E,C,T,U].map(Math.round),backgroundColor:[css('--down'),c6,c3,c4,c1,css('--up')]}]},options:{...O,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>nf(c.raw)+'억'}}},scales:{x:{ticks:{callback:v=>nf(v)}}}}})}
+ if(h==='px'){
+  mk('cP',{type:'line',data:{labels:P.d,datasets:[{label:'펌텍코리아',data:P['펌텍코리아'],borderColor:c1,pointRadius:0,borderWidth:1.6,spanGaps:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:8}}}}});
+  const base=a=>{const f=a.find(x=>x!=null);return a.map(x=>x==null?null:+(x/f*100).toFixed(1))};
+  const cs=[c1,c2,c3,c4,c5,c6];
+  mk('cR',{type:'line',data:{labels:P.d,datasets:['펌텍코리아','한국콜마','코스맥스','코스메카코리아','에이피알','클리오'].map((n,i)=>({label:n,data:base(P[n]),borderColor:cs[i],pointRadius:0,borderWidth:n==='펌텍코리아'?2.4:1.2,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},scales:{x:{ticks:{maxTicksLimit:8}}}}});
+ }
+}
+$('#theme').onclick=()=>{const r=document.documentElement;const cur=r.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');r.dataset.theme=cur==='dark'?'light':'dark';nav()};
+build();window.addEventListener('hashchange',nav);nav();
+</script>
+</body>
+</html>
